@@ -49,11 +49,6 @@ var yapp = (function() {
             // Setup yapp element background image
             instance.setupImg(imgSrc, el);
 
-            // Get position for yapp elements
-            instance.yappImgBottom = el.getBoundingClientRect().bottom;
-            instance.yappImgTop = el.getBoundingClientRect().top;
-            instance.yappImgPos = -((instance.yappImgBottom - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
-
         }
         return this;
     };
@@ -97,65 +92,44 @@ var yapp = (function() {
         return this;
     };
 
-    instance.onScroll = function() {
+    // Scroll image
+    instance.yappScroll = function() {
 
-        for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
+    	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i];
 
             instance.yappImgBottom = el.getBoundingClientRect().bottom;
             instance.yappImgTop = el.getBoundingClientRect().top;
             instance.yappImgPos = -((instance.yappImgBottom - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
 
-            instance.requestTick(i);
-            
+            // Get current yapp image element
+            var elImg = instance.yappImgBlock[i];
 
-            // elImg.style.transform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-
-
-            // if (elImg.hasOwnProperty('webkitTransform')) {
-            //     elImg.style.webkitTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            // } else if (elImg.hasOwnProperty('mozTransform')) {
-            //     elImg.style.mozTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            // } else if (elImg.hasOwnProperty('msTransform')) {
-            //     elImg.style.msTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            // } else if (elImg.hasOwnProperty('oTransform')) {
-            //     elImg.style.oTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            // } else if (elImg.hasOwnProperty('transform')) {
-            //     elImg.style.transform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            // }
-
+            // Check for vendor prefix
+            if ('transform' in elImg.style) {
+                elImg.style.transform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+            } else if ('mozTransform' in elImg.style) {
+                elImg.style.mozTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+            } else if ('msTransform' in elImg.style) {
+                elImg.style.msTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+            } else if ('oTransform' in elImg.style) {
+                elImg.style.oTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+            } else if ('webkitTransform' in elImg.style) {
+                elImg.style.webkitTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+            }
 
         }
-        return this;
-    };
-
-    instance.yappScroll = function(i) {
-
-        var el = instance.yappImgBlock[i];
-        
-        // Set some boundaries
-       // if (instance.yappImgTop <= window.outerHeight && instance.yappImgBottom >= 0 && instance.yappImgPos < instance.opts.scrollMod) {
-			if (el.hasOwnProperty('webkitTransform')) {
-                el.style.webkitTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            } else if (el.hasOwnProperty('mozTransform')) {
-                el.style.mozTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            } else if (el.hasOwnProperty('msTransform')) {
-                el.style.msTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            } else if (el.hasOwnProperty('oTransform')) {
-                el.style.oTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            } else if (el.hasOwnProperty('transform')) {
-                el.style.transform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
-            }
-       // }
 
         instance.ticking = false;
         return this;
     };
 
-    instance.requestTick = function(i) {
-        // instance.yappScroll(i);
+    // Run scroll
+    instance.requestTick = function() {
+    	
         if (!instance.ticking) {
-            requestAnimationFrame(instance.yappScroll(i));
+       		// Update animation
+            requestAnimationFrame(instance.yappScroll.bind(instance));
             instance.ticking = true;
         }
         return this;
@@ -164,12 +138,12 @@ var yapp = (function() {
     // Initiate yapp
     instance.init = function() {
         instance.setupContainer();
-
-        window.addEventListener('scroll', instance.onScroll, false);
+        instance.yappScroll();
+        window.addEventListener('scroll', instance.requestTick, false);
 
         return this;
     };
 
     instance.init();
-    return this;
+    return instance;
 })();
