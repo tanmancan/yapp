@@ -30,15 +30,15 @@ var yapp = (function() {
     // Default settings
     instance.opts = {
     	// Parallax modifiers
-    	'scrollMod': 300,
+    	'scrollMod': 200,
     	'mobileBreakpoint': 1024,
         // Yapp container
-        'contW': '100vw',
-        'contH': (100 / 3) + 'vh',
+        'contW': 100,
+        'contH': (100 / 3),
         'contOverflow': 'hidden',
         // Yapp image
-        'imgW': '100vw',
-        'imgH': 100 + 'vh',
+        'imgW': 100,
+        'imgH': 100,
         'imgPosTop': -50 + 'vh',
         'imgPosBottom': '',
         'bgSize': 'cover',
@@ -66,10 +66,13 @@ var yapp = (function() {
         // Setup up styles for each yapp elements
         for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i],
-                imgSrc = el.getAttribute('data-yapp-img');
+                imgSrc = el.getAttribute('data-yapp-img'),
+                usrOpts = {
+			        'contH': el.getAttribute('data-yapp-height'),
+                }
 
             // Setup yapp element container
-            instance.setupContainerStyle(el);
+            instance.setupContainerStyle(el, usrOpts);
             // Setup yapp element background image
             instance.setupImg(imgSrc, el);
 
@@ -78,10 +81,10 @@ var yapp = (function() {
     };
 
     // Add container styles
-    instance.setupContainerStyle = function(el) {
+    instance.setupContainerStyle = function(el, usrOpts) {
 
-        el.style.width = instance.opts.contW;
-        el.style.height = instance.opts.contH;
+        el.style.width = instance.opts.contW + 'vw';
+        usrOpts.contH ? el.style.height = usrOpts.contH : el.style.height = instance.opts.contH + 'vh';
         el.style.overflow = instance.opts.contOverflow;
         el.style.position = instance.opts.posRel;
 
@@ -106,8 +109,8 @@ var yapp = (function() {
     instance.setupImgStyle = function(el, img) {
 
         el.style.background = 'url(' + img + ') center center no-repeat';
-        el.style.width = instance.opts.imgW;
-        el.style.height = instance.opts.imgH;
+        el.style.width = instance.opts.imgW + 'vw';
+        el.style.height = instance.opts.imgH + 'vh';
         el.style.backgroundSize = instance.opts.bgSize;
         el.style.position = instance.opts.posAbs;
         el.style.top = instance.opts.imgPosTop;
@@ -151,7 +154,7 @@ var yapp = (function() {
         return this;
     };
 
-    // Run scroll
+    // Run scroll transform
     instance.requestTick = function() {
     	
         if (!instance.ticking) {
