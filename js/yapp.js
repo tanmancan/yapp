@@ -69,7 +69,7 @@ var yapp = (function() {
                 imgSrc = el.getAttribute('data-yapp-img'),
                 usrOpts = {
 			        'contH': el.getAttribute('data-yapp-height'),
-                }
+                };
 
             // Setup yapp element container
             instance.setupContainerStyle(el, usrOpts);
@@ -84,7 +84,11 @@ var yapp = (function() {
     instance.setupContainerStyle = function(el, usrOpts) {
 
         el.style.width = instance.opts.contW + 'vw';
-        usrOpts.contH ? el.style.height = usrOpts.contH : el.style.height = instance.opts.contH + 'vh';
+        if(usrOpts.contH){
+        	el.style.height = usrOpts.contH;
+        }else{
+        	el.style.height = instance.opts.contH + 'vh';
+        }
         el.style.overflow = instance.opts.contOverflow;
         el.style.position = instance.opts.posRel;
 
