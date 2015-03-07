@@ -134,26 +134,26 @@ var yapp = (function() {
     	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i];
 
-            instance.yappContainerBlocks[i].yappContainerBottom = el.getBoundingClientRect().bottom;
-            instance.yappContainerBlocks[i].yappContainerTop = el.getBoundingClientRect().top;
-            instance.yappContainerBlocks[i].yappImgPos = -((instance.yappContainerBlocks[i].yappContainerBottom - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
+            var containterBottom = el.getBoundingClientRect().bottom,
+                containerTop = el.getBoundingClientRect().top,
+                imagePosition = instance.caclImgPos(containterBottom, containerTop);
 
             // Get current yapp image element
             var elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
             // Set some boundaries
-			if (instance.yappContainerBlocks[i].yappContainerTop <= window.outerHeight && instance.yappContainerBlocks[i].yappContainerBottom >= 0 && instance.yappContainerBlocks[i].yappImgPos < instance.opts.scrollMod && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
+			if (containerTop <= window.outerHeight && containterBottom >= 0 && imagePosition < instance.opts.scrollMod && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
 				// Check for vendor prefix
 				if ('transform' in elImg.style) {
-				    elImg.style.transform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
+				    elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				} else if ('mozTransform' in elImg.style) {
-				    elImg.style.mozTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
+				    elImg.style.mozTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				} else if ('msTransform' in elImg.style) {
-				    elImg.style.msTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
+				    elImg.style.msTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				} else if ('oTransform' in elImg.style) {
-				    elImg.style.oTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
+				    elImg.style.oTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				} else if ('webkitTransform' in elImg.style) {
-				    elImg.style.webkitTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
+				    elImg.style.webkitTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				}
 			}
             
@@ -161,6 +161,15 @@ var yapp = (function() {
 
         instance.ticking = false;
         return this;
+    };
+
+    // Calculate image position
+    instance.caclImgPos = function(cB, cT) {
+        var pos;
+
+        pos = -((cB - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
+
+        return pos;
     };
 
     // Run scroll transform
