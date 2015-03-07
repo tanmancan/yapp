@@ -35,7 +35,7 @@ var yapp = (function() {
         // Yapp container
         'contW': 100,
         'contH': (100 / 3),
-        'contOverflow': 'hidden',
+        'contOverflow': 'visible',
         // Yapp image
         'imgW': 100,
         'imgH': 100,
@@ -50,15 +50,19 @@ var yapp = (function() {
     // Retrieve all yapp elements
     instance.yappContainerBlocks = document.querySelectorAll('[data-yapp-img]');
 
-    // Image elements
-    instance.yappImgBlock = [];
-    instance.yappImgBottom = '';
-    instance.yappImgTop = '';
-    instance.yappImgPos = '';
-
     // RAF
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     instance.ticking = false;
+
+    // Retrieve custom data-yapp settings
+    instance.userOptions = function(el){
+        var dataOpts = {};
+
+        // Custom height
+        dataOpts.contH = el.getAttribute('data-yapp-height') ? el.getAttribute('data-yapp-height') : null;
+        
+        return dataOpts;
+    };
 
     // Setup yapp elements
     instance.setupContainer = function() {
@@ -66,15 +70,16 @@ var yapp = (function() {
         // Setup up styles for each yapp elements
         for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i],
-                imgSrc = el.getAttribute('data-yapp-img'),
-                usrOpts = {
-			        'contH': el.getAttribute('data-yapp-height'),
-                };
+                imgSrc = el.getAttribute('data-yapp-img');
+
+            // Get data-yapp options
+            instance.yappContainerBlocks[i].usrOpts = instance.userOptions(el);
 
             // Setup yapp element container
-            instance.setupContainerStyle(el, usrOpts);
+            instance.setupContainerStyle(el, instance.yappContainerBlocks[i].usrOpts);
+
             // Setup yapp element background image
-            instance.setupImg(imgSrc, el);
+            instance.setupImg(imgSrc, el, i);
 
         }
         return this;
@@ -84,11 +89,10 @@ var yapp = (function() {
     instance.setupContainerStyle = function(el, usrOpts) {
 
         el.style.width = instance.opts.contW + 'vw';
-        if(usrOpts.contH){
-        	el.style.height = usrOpts.contH;
-        }else{
-        	el.style.height = instance.opts.contH + 'vh';
-        }
+
+        el.style.height = usrOpts.contH ? usrOpts.contH : instance.opts.contH + 'vh';
+       
+
         el.style.overflow = instance.opts.contOverflow;
         el.style.position = instance.opts.posRel;
 
@@ -96,7 +100,7 @@ var yapp = (function() {
     };
 
     // Create and add image elements to container
-    instance.setupImg = function(imgSrc, el) {
+    instance.setupImg = function(imgSrc, el, i) {
 
         var imgBlock = document.createElement('div');
 
@@ -104,7 +108,8 @@ var yapp = (function() {
 
         el.appendChild(imgBlock);
 
-        instance.yappImgBlock.push(imgBlock);
+        // Add yapp image element as a property of yapp container element
+        instance.yappContainerBlocks[i].yappImgBlock = imgBlock ;
 
         return this;
     };
@@ -129,26 +134,26 @@ var yapp = (function() {
     	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i];
 
-            instance.yappImgBottom = el.getBoundingClientRect().bottom;
-            instance.yappImgTop = el.getBoundingClientRect().top;
-            instance.yappImgPos = -((instance.yappImgBottom - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
+            instance.yappContainerBlocks[i].yappContainerBottom = el.getBoundingClientRect().bottom;
+            instance.yappContainerBlocks[i].yappContainerTop = el.getBoundingClientRect().top;
+            instance.yappContainerBlocks[i].yappImgPos = -((instance.yappContainerBlocks[i].yappContainerBottom - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
 
             // Get current yapp image element
-            var elImg = instance.yappImgBlock[i];
+            var elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
             // Set some boundaries
-			if (instance.yappImgTop <= window.outerHeight && instance.yappImgBottom >= 0 && instance.yappImgPos < instance.opts.scrollMod && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
+			if (instance.yappContainerBlocks[i].yappContainerTop <= window.outerHeight && instance.yappContainerBlocks[i].yappContainerBottom >= 0 && instance.yappContainerBlocks[i].yappImgPos < instance.opts.scrollMod && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
 				// Check for vendor prefix
 				if ('transform' in elImg.style) {
-				    elImg.style.transform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+				    elImg.style.transform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
 				} else if ('mozTransform' in elImg.style) {
-				    elImg.style.mozTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+				    elImg.style.mozTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
 				} else if ('msTransform' in elImg.style) {
-				    elImg.style.msTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+				    elImg.style.msTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
 				} else if ('oTransform' in elImg.style) {
-				    elImg.style.oTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+				    elImg.style.oTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
 				} else if ('webkitTransform' in elImg.style) {
-				    elImg.style.webkitTransform = 'translate3d(0px,' + instance.yappImgPos + 'px, 0px)';
+				    elImg.style.webkitTransform = 'translate3d(0px,' + instance.yappContainerBlocks[i].yappImgPos + 'px, 0px)';
 				}
 			}
             
@@ -181,3 +186,6 @@ var yapp = (function() {
     instance.init();
     return instance;
 })();
+
+
+window.addEventListener('click', console.log(yapp), false);
