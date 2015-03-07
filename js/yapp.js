@@ -38,11 +38,11 @@ var yapp = (function() {
         'containerOverflow': 'hidden',
         // Yapp image
         'imageWidth': 100,
-        'imageHeight': (100 / 3) * 2,
-        'imagePositionTop': '',
         'imagePositionBottom': 0,
         'backgroundSize': 'cover',
         // Styles
+        'cssWidthUnit': '%',
+        'cssHeightUnit': 'vh',
         'posAbs': 'absolute',
         'posRel': 'relative'
     };
@@ -59,9 +59,21 @@ var yapp = (function() {
         var dataOpts = {};
 
         // Custom height - data-yapp-height
-        dataOpts.containerHeight = el.getAttribute('data-yapp-height') ? el.getAttribute('data-yapp-height') : null;
+        // Get the value and unit for custom height value  - data-yapp-height
+        if(el.getAttribute('data-yapp-height')){
+            var height = el.getAttribute('data-yapp-height'),
+                regex = /([A-Za-z]+\w)/,
+                heightArr = height.split(regex,2),
+                heightVal = heightArr[0],
+                heightUnit = heightArr[1];
+        }
+        // Custom height value
+        dataOpts.containerHeight = heightVal ? heightVal : null;
+        // Custom height Unit
+        dataOpts.cssHeightUnit = heightUnit ? heightUnit : null;
+
         // Scroll modifier - data-yapp-modifier
-        dataOpts.scrollModifier = el.getAttribute('data-yapp-modifier') ? el.getAttribute('data-yapp-modifier') : null;
+        dataOpts.scrollModifier = el.getAttribute('data-yapp-modifier') ? instance.opts.scrollModifier + (el.getAttribute('data-yapp-modifier')/100) : null;
         
         return dataOpts;
     };
@@ -77,11 +89,11 @@ var yapp = (function() {
             // Get data-yapp options
             instance.yappContainerBlocks[i].usrOpts = instance.userOptions(el);
 
-            // Setup yapp element container
+            // Setup yapp element container styles
             instance.setupContainerStyle(el, instance.yappContainerBlocks[i].usrOpts);
 
             // Setup yapp element background image
-            instance.setupImg(imgSrc, el, i);
+            instance.setupImg(imgSrc, el, i, instance.yappContainerBlocks[i].usrOpts);
 
         }
         return this;
@@ -90,9 +102,9 @@ var yapp = (function() {
     // Add container styles
     instance.setupContainerStyle = function(el, usrOpts) {
 
-        el.style.width = instance.opts.containerWidth + 'vw';
+        el.style.width = instance.opts.containerWidth + instance.opts.cssWidthUnit;
 
-        el.style.height = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.containerHeight + 'vh';
+        el.style.height = usrOpts.containerHeight ? usrOpts.containerHeight + usrOpts.cssHeightUnit : instance.opts.containerHeight + instance.opts.cssHeightUnit;
        
 
         el.style.overflow = instance.opts.containerOverflow;
@@ -102,12 +114,15 @@ var yapp = (function() {
     };
 
     // Create and add image elements to container
-    instance.setupImg = function(imgSrc, el, i) {
+    instance.setupImg = function(imgSrc, el, i, usrOpts) {
 
+        // Create element for background image
         var imgBlock = document.createElement('div');
 
-        instance.setupImgStyle(imgBlock, imgSrc);
+        // Apply style to imaeg element
+        instance.setupImgStyle(imgBlock, imgSrc, usrOpts);
 
+        // Insert image element into container element
         el.appendChild(imgBlock);
 
         // Add yapp image element as a property of yapp container element
@@ -117,14 +132,17 @@ var yapp = (function() {
     };
 
     // Add image element styles
-    instance.setupImgStyle = function(el, img) {
+    instance.setupImgStyle = function(el, img, usrOpts) {
+        // Use custom value if it iexists
+        var scrollModifier = usrOpts.scrollModifier ? usrOpts.scrollModifier : instance.opts.scrollModifier,
+            containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.containerHeight,
+            cssHeightUnit = usrOpts.cssHeightUnit ? usrOpts.cssHeightUnit : instance.opts.cssHeightUnit;
 
         el.style.background = 'url(' + img + ') center center no-repeat';
-        el.style.width = instance.opts.imageWidth + 'vw';
-        el.style.height = instance.opts.imageHeight + 'vh';
+        el.style.width = instance.opts.imageWidth + instance.opts.cssWidthUnit;
+        el.style.height = (containerHeight * scrollModifier) + cssHeightUnit;
         el.style.backgroundSize = instance.opts.backgroundSize;
         el.style.position = instance.opts.posAbs;
-        el.style.top = instance.opts.imagePositionTop;
         el.style.bottom = instance.opts.imagePositionBottom;
 
         return this;
@@ -159,7 +177,6 @@ var yapp = (function() {
 				    elImg.style.webkitTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				}
 			}
-            
         }
 
         instance.ticking = false;
@@ -172,9 +189,6 @@ var yapp = (function() {
         // Make sure image does not have any gap between it and the container
         var containerOffsetPercent = cB/window.outerHeight,
             imgOffsetAmmount = cH - (cH * containerOffsetPercent);
-
-        console.log(imgOffsetAmmount);
-        //pos = -((cB - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
 
         return imgOffsetAmmount;
     };
