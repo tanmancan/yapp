@@ -17,6 +17,7 @@ module.exports = function(grunt) {
         				'The MIT License (MIT)\n' +
         				'Copyright (c) 2015 Tanveer Karim\n' +
 						'http://www.tkarimdesign.com/\n' +
+						'https://github.com/tanmancan/yapp\n' +
 						'*/\n'
 			},
 			dist: {
@@ -25,10 +26,27 @@ module.exports = function(grunt) {
 		      }
 		    }
 		},
+		//Compile SASS
+        sass: {
+            dist: {
+                options: { 
+                    outputStyle: 'compressed',
+                    sourceMap: false
+                },
+                files: { 
+                    'demo/demo.css': 'demo/demo.scss'
+                }
+            }
+        },
 		// Watch
         watch: {
-            js: {
-                files: ['*.html', 'js/*.js']
+	        sass: {
+	            files: ['demo/*.scss'],
+	            tasks: ['sass:dist']
+	        },
+            other: {
+                files: ['*.html', 'js/*.js'],
+                tasks: ['uglify']
             },
             // Live reload on file changes
             options: { 

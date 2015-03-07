@@ -2,6 +2,7 @@
 
 // Copyright (c) 2015 Tanveer Karim
 // http://www.tkarimdesign.com/
+// https://github.com/tanmancan/yapp
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,15 +57,17 @@ var yapp = (function() {
 
     // Retrieve custom data-yapp settings
     instance.userOptions = function(el){
-        var dataOpts = {};
+        var dataOpts = {},
+            heightVal = instance.opts.containerHeight,
+            heightUnit = instance.opts.cssHeightUnit;
 
         // Custom height - data-yapp-height
         // Get the value and unit for custom height value  - data-yapp-height
         if(el.getAttribute('data-yapp-height')){
             var height = el.getAttribute('data-yapp-height'),
                 regex = /([A-Za-z]+\w)/,
-                heightArr = height.split(regex,2),
-                heightVal = heightArr[0],
+                heightArr = height.split(regex,2);
+                heightVal = heightArr[0];
                 heightUnit = heightArr[1];
         }
         // Custom height value
