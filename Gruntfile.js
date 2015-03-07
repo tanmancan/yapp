@@ -24,10 +24,21 @@ module.exports = function(grunt) {
 		        'js/yapp.min.js': ['js/yapp.js']
 		      }
 		    }
-		}
+		},
+		// Watch
+        watch: {
+            js: {
+                files: ['*.html', 'js/*.js']
+            },
+            // Live reload on file changes
+            options: { 
+                livereload: true 
+            }
+        },
 	});
 
 	// Task(s)
+    grunt.registerTask('dev', ['watch']);
 	grunt.registerTask('test', ['jshint']);
 	grunt.registerTask('default', ['uglify']);
 
