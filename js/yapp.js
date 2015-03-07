@@ -30,17 +30,17 @@ var yapp = (function() {
     // Default settings
     instance.opts = {
     	// Parallax modifiers
-    	'scrollMod': 200,
+    	'scrollModifier': 2,
     	'mobileBreakpoint': 1024,
         // Yapp container
         'contW': 100,
         'contH': (100 / 3),
-        'contOverflow': 'visible',
+        'contOverflow': 'hidden',
         // Yapp image
         'imgW': 100,
-        'imgH': 100,
-        'imgPosTop': -50 + 'vh',
-        'imgPosBottom': '',
+        'imgH': (100 / 3) * 2,
+        'imgPosTop': '',
+        'imgPosBottom': 0,
         'bgSize': 'cover',
         // Styles
         'posAbs': 'absolute',
@@ -134,15 +134,16 @@ var yapp = (function() {
     	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             var el = instance.yappContainerBlocks[i];
 
-            var containterBottom = el.getBoundingClientRect().bottom,
+            var containerHeight = el.getBoundingClientRect().height,
+                containterBottom = el.getBoundingClientRect().bottom,
                 containerTop = el.getBoundingClientRect().top,
-                imagePosition = instance.caclImgPos(containterBottom, containerTop);
+                imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
 
             // Get current yapp image element
             var elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
             // Set some boundaries
-			if (containerTop <= window.outerHeight && containterBottom >= 0 && imagePosition < instance.opts.scrollMod && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
+			if (containerTop <= window.outerHeight &&  window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
 				// Check for vendor prefix
 				if ('transform' in elImg.style) {
 				    elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
@@ -164,12 +165,16 @@ var yapp = (function() {
     };
 
     // Calculate image position
-    instance.caclImgPos = function(cB, cT) {
-        var pos;
+    instance.caclImgPos = function(cB, cT, cH) {
 
-        pos = -((cB - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
+        // Make sure image does not have any gap between it and the container
+        var containerOffsetPercent = cB/window.outerHeight,
+            imgOffsetAmmount = cH - (cH * containerOffsetPercent);
 
-        return pos;
+        console.log(imgOffsetAmmount);
+        //pos = -((cB - window.outerHeight) / window.outerHeight) * instance.opts.scrollMod;
+
+        return imgOffsetAmmount;
     };
 
     // Run scroll transform
