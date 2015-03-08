@@ -1,11 +1,34 @@
 @import url(http://fonts.googleapis.com/css?family=Vollkorn:400italic,700italic,400,700);
 body {
     margin: 0;
+    font-family: 'Vollkorn', serif;
+}
+nav{
+	position: absolute;
+	width: 100%;
+	top:0;
+	color: #fff;
+	text-align: right;
+	z-index: 2;
+	.wrapper{
+		max-width: 80rem;
+		margin: 0 auto;
+	}
+	.brand{
+		float: left;
+		font-size: 2rem;
+		font-weight: bold;
+	}
+	a{
+		color: #fff;
+		font-size: 1rem;
+		font-weight: normal;
+	}
 }
 p {
 	line-height: 2rem;
     font-size: 1.2rem;
-    font-family: 'Vollkorn', serif;
+  	text-rendering: optimizeLegibility;
     color: #555;
     max-width: 80rem;
     margin: 0 auto;
@@ -30,10 +53,10 @@ p {
     }
 }
 blockquote {
-    font-family: 'Vollkorn', serif;
     font-size: 3rem;
     font-style: italic;
     font-weight: normal;
+  	text-rendering: optimizeLegibility;
     color: #333;
     background: white;
     line-height: 3.8rem;
