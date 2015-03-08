@@ -43,6 +43,7 @@ var yapp = (function() {
         'imagePositionBottom': 0,
         'backgroundSize': 'cover',
         // Styles
+        'marginAuto': '0 auto',
         'cssWidthUnit': '%',
         'cssHeightUnit': 'vh',
         'posAbs': 'absolute',
@@ -60,7 +61,9 @@ var yapp = (function() {
     instance.userOptions = function(el){
         var dataOpts = {},
             heightVal = instance.opts.containerHeight,
-            heightUnit = instance.opts.cssHeightUnit;
+            heightUnit = instance.opts.cssHeightUnit,
+            widthVal = instance.opts.containerWidth,
+            widthUnit = instance.opts.cssWidthUnit;
 
         // Custom height - data-yapp-height
         // Get the value and unit for custom height value  - data-yapp-height
@@ -75,6 +78,20 @@ var yapp = (function() {
         dataOpts.containerHeight = heightVal ? heightVal : null;
         // Custom height Unit
         dataOpts.cssHeightUnit = heightUnit ? heightUnit : null;
+
+        // Custom width - data-yapp-width
+        // Get the value and unit for custom width value  - data-yapp-width
+        if(el.getAttribute('data-yapp-width')){
+            var width = el.getAttribute('data-yapp-width'),
+                regex = /([A-Za-z]+\w)/,
+                widthArr = width.split(regex,2);
+                widthVal = widthArr[0];
+                widthUnit = widthArr[1];
+        }
+        // Custom width value
+        dataOpts.containerWidth = widthVal ? widthVal : null;
+        // Custom width Unit
+        dataOpts.cssWidthUnit = widthUnit ? widthUnit : null;
 
         // Scroll modifier - data-yapp-modifier
         dataOpts.scrollModifier = el.getAttribute('data-yapp-modifier') ? instance.opts.scrollModifier + (el.getAttribute('data-yapp-modifier')/100) : null;
@@ -109,11 +126,16 @@ var yapp = (function() {
     // Add container styles
     instance.setupContainerStyle = function(el, usrOpts) {
 
-        el.style.width = instance.opts.containerWidth + instance.opts.cssWidthUnit;
+        // Set container width
+        el.style.width = usrOpts.containerWidth ? usrOpts.containerWidth + usrOpts.cssWidthUnit : instance.opts.containerWidth + instance.opts.cssWidthUnit;
 
+        // Set margin auto
+        el.style.margin = instance.opts.marginAuto;
+
+        // Set container height
         el.style.height = usrOpts.containerHeight ? usrOpts.containerHeight + usrOpts.cssHeightUnit : instance.opts.containerHeight + instance.opts.cssHeightUnit;
-       
-
+        
+        // Set relative position and overflow hidden
         el.style.overflow = instance.opts.containerOverflow;
         el.style.position = instance.opts.posRel;
 
