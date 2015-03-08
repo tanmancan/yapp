@@ -45,8 +45,7 @@ module.exports = function(grunt) {
 	            tasks: ['sass:dist']
 	        },
             other: {
-                files: ['*.html', 'js/*.js'],
-                tasks: ['uglify']
+                files: ['*.html', 'js/*.js']
             },
             // Live reload on file changes
             options: { 

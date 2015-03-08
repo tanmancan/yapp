@@ -38,6 +38,7 @@ var yapp = (function() {
         'containerHeight': (100 / 3),
         'containerOverflow': 'hidden',
         // Yapp image
+        'staticImage': false,
         'imageWidth': 100,
         'imagePositionBottom': 0,
         'backgroundSize': 'cover',
@@ -77,6 +78,9 @@ var yapp = (function() {
 
         // Scroll modifier - data-yapp-modifier
         dataOpts.scrollModifier = el.getAttribute('data-yapp-modifier') ? instance.opts.scrollModifier + (el.getAttribute('data-yapp-modifier')/100) : null;
+        
+        // Non scrolling image - data-yapp-static
+        dataOpts.staticImage = el.hasAttribute('data-yapp-static') ? true : false;
         
         return dataOpts;
     };
@@ -166,7 +170,7 @@ var yapp = (function() {
             var elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
             // Set some boundaries
-			if (containerTop <= window.outerHeight &&  window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
+			if (containerTop <= window.outerHeight && !instance.yappContainerBlocks[i].usrOpts.staticImage && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
 				// Check for vendor prefix
 				if ('transform' in elImg.style) {
 				    elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
