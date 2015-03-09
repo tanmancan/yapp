@@ -9,6 +9,8 @@ nav{
 	top:0;
 	color: #fff;
 	text-align: right;
+	line-height: 2rem;
+	padding: 1rem 0;
 	z-index: 2;
 	.wrapper{
 		max-width: 80rem;
@@ -23,6 +25,12 @@ nav{
 		color: #fff;
 		font-size: 1rem;
 		font-weight: normal;
+		padding: 0 0 0 .5rem;
+		text-decoration: none;
+		&:hover,
+		&:focus{
+			text-decoration: underline;
+		}
 	}
 }
 p {
@@ -53,7 +61,7 @@ p {
     }
 }
 blockquote {
-    font-size: 3rem;
+    font-size: 2.6rem;
     font-style: italic;
     font-weight: normal;
   	text-rendering: optimizeLegibility;
@@ -77,7 +85,11 @@ blockquote {
     [data-yapp-img] &{
     	color: #fff;
     	background: transparent;
-    	margin: 0 auto;
+    	margin: 0 auto;  
+    	position: absolute;
+		bottom: 1rem;
+		left: 0;
+		right: 0;
     	&:before{
     		opacity: .75;
     	}

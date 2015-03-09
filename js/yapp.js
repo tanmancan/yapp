@@ -83,7 +83,7 @@ var yapp = (function() {
         // Get the value and unit for custom width value  - data-yapp-width
         if(el.getAttribute('data-yapp-width')){
             var width = el.getAttribute('data-yapp-width'),
-                regex = /([A-Za-z]+\w)/,
+                regex = /([A-Za-z%]+)/,
                 widthArr = width.split(regex,2);
                 widthVal = widthArr[0];
                 widthUnit = widthArr[1];
