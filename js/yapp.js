@@ -129,6 +129,9 @@ var yapp = (function() {
         // Set container width
         el.style.width = usrOpts.containerWidth ? usrOpts.containerWidth + usrOpts.cssWidthUnit : instance.opts.containerWidth + instance.opts.cssWidthUnit;
 
+        // Set max width of 100% to prevent horizontal scroll
+        el.style.maxWidth = "100%";
+
         // Set margin auto
         el.style.margin = instance.opts.marginAuto;
 
