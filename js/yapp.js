@@ -69,8 +69,8 @@ var yapp = (function() {
         // Get the value and unit for custom height value  - data-yapp-height
         if(el.getAttribute('data-yapp-height')){
             var height = el.getAttribute('data-yapp-height'),
-                regex = /([A-Za-z]+\w)/,
-                heightArr = height.split(regex,2);
+                regexH = /([A-Za-z]+\w)/,
+                heightArr = height.split(regexH,2);
                 heightVal = heightArr[0];
                 heightUnit = heightArr[1];
         }
@@ -83,8 +83,8 @@ var yapp = (function() {
         // Get the value and unit for custom width value  - data-yapp-width
         if(el.getAttribute('data-yapp-width')){
             var width = el.getAttribute('data-yapp-width'),
-                regex = /([A-Za-z%]+)/,
-                widthArr = width.split(regex,2);
+                regexW = /([A-Za-z%]+)/,
+                widthArr = width.split(regexW,2);
                 widthVal = widthArr[0];
                 widthUnit = widthArr[1];
         }
@@ -108,7 +108,7 @@ var yapp = (function() {
             imgSrc = null;
         // Setup up styles for each yapp elements
         for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
-            el = instance.yappContainerBlocks[i],
+            el = instance.yappContainerBlocks[i];
             imgSrc = el.getAttribute('data-yapp-img');
 
             // Get data-yapp options
@@ -184,7 +184,6 @@ var yapp = (function() {
     // Scroll image
     instance.yappScroll = function() {
 
-
         var containerHeight = 0,
             containterBottom = 0,
             containerTop = 0,
@@ -195,8 +194,8 @@ var yapp = (function() {
     	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
             el = instance.yappContainerBlocks[i];
 
-            containerHeight = el.getBoundingClientRect().height,
-            containterBottom = el.getBoundingClientRect().bottom,
+            containerHeight = el.getBoundingClientRect().height;
+            containterBottom = el.getBoundingClientRect().bottom;
             containerTop = el.getBoundingClientRect().top;
 
             // Get current yapp image element
