@@ -104,11 +104,12 @@ var yapp = (function() {
 
     // Setup yapp elements
     instance.setupContainer = function() {
-
+        var el = null,
+            imgSrc = null;
         // Setup up styles for each yapp elements
         for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
-            var el = instance.yappContainerBlocks[i],
-                imgSrc = el.getAttribute('data-yapp-img');
+            el = instance.yappContainerBlocks[i],
+            imgSrc = el.getAttribute('data-yapp-img');
 
             // Get data-yapp options
             instance.yappContainerBlocks[i].usrOpts = instance.userOptions(el);
@@ -183,20 +184,30 @@ var yapp = (function() {
     // Scroll image
     instance.yappScroll = function() {
 
-    	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
-            var el = instance.yappContainerBlocks[i];
 
-            var containerHeight = el.getBoundingClientRect().height,
-                containterBottom = el.getBoundingClientRect().bottom,
-                containerTop = el.getBoundingClientRect().top,
-                imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
+        var containerHeight = 0,
+            containterBottom = 0,
+            containerTop = 0,
+            imagePosition = null,
+            el = null,
+            elImg = null;
+
+    	for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
+            el = instance.yappContainerBlocks[i];
+
+            containerHeight = el.getBoundingClientRect().height,
+            containterBottom = el.getBoundingClientRect().bottom,
+            containerTop = el.getBoundingClientRect().top;
 
             // Get current yapp image element
-            var elImg = instance.yappContainerBlocks[i].yappImgBlock;
+            elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
             // Set some boundaries
-			if (containerTop <= window.outerHeight && !instance.yappContainerBlocks[i].usrOpts.staticImage && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
-				// Check for vendor prefix
+			if (containerTop <= window.outerHeight && containterBottom > 0 && !instance.yappContainerBlocks[i].usrOpts.staticImage && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches){
+				// Calculate position
+                imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
+                
+                // Check for vendor prefix
 				if ('transform' in elImg.style) {
 				    elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
 				} else if ('mozTransform' in elImg.style) {
@@ -218,7 +229,7 @@ var yapp = (function() {
     // Calculate image position
     instance.caclImgPos = function(cB, cT, cH) {
 
-        // Make sure image does not have any gap between it and the container
+        // Calculate image element translateY based on position of container element
         var containerOffsetPercent = cB/window.outerHeight,
             imgOffsetAmmount = cH - (cH * containerOffsetPercent);
 
@@ -249,5 +260,3 @@ var yapp = (function() {
     return instance;
 })();
 
-
-window.addEventListener('click', console.log(yapp), false);
