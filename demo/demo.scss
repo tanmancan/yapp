@@ -138,11 +138,11 @@ blockquote {
         display: inline-block;
         margin: 0rem 1rem 1rem 0;
         padding: .5rem 1rem;
-        background: rgb(85, 85, 85);
+        background: #4AA3B8;
         color: white;
         border-radius: 5px;
         &:hover {
-            background: rgb(70, 70, 70);
+            background: darken(#4AA3B8, 15%);
         }
     }
     hr{
