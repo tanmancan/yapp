@@ -184,24 +184,32 @@ var yapp = (function() {
   // Scroll image
   instance.yappScroll = function() {
 
-    var imagePosition = this.imagePosition,
-      elImg = this.elImg;
+    var imagePosition,
+        elImg;
 
-    // Check for vendor prefix
-    if ('transform' in elImg.style) {
-      elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-    } else if ('mozTransform' in elImg.style) {
-      elImg.style.mozTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-    } else if ('msTransform' in elImg.style) {
-      elImg.style.msTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-    } else if ('oTransform' in elImg.style) {
-      elImg.style.oTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-    } else if ('webkitTransform' in elImg.style) {
-      elImg.style.webkitTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+    // while(instance.yappContainerBlocks) {
+    //   console.log(this);
+    // }
+    for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
+      elImg = instance.yappContainerBlocks[i].yappImgBlock;
+      imagePosition = instance.yappContainerBlocks[i].yappImgBlock.imagePosition;
+
+      // Check for vendor prefix
+      if ('transform' in elImg.style) {
+        elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      } else if ('mozTransform' in elImg.style) {
+        elImg.style.mozTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      } else if ('msTransform' in elImg.style) {
+        elImg.style.msTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      } else if ('oTransform' in elImg.style) {
+        elImg.style.oTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      } else if ('webkitTransform' in elImg.style) {
+        elImg.style.webkitTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      }
     }
 
     instance.ticking = false;
-    return instance;
+    return this;
   };
 
   // Calculate image position
@@ -216,7 +224,6 @@ var yapp = (function() {
 
   // Run scroll transform
   instance.requestTick = function() {
-
     var containerHeight = 0,
       containterBottom = 0,
       containerTop = 0,
@@ -235,17 +242,21 @@ var yapp = (function() {
       elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
       // Set some boundaries
-      if (containerTop <= window.outerHeight && containterBottom > 0 && !instance.yappContainerBlocks[i].usrOpts.staticImage && window.matchMedia('(min-width: ' + instance.opts.mobileBreakpoint + 'px)').matches) {
+      var boundariesTest =  containerTop <= window.outerHeight &&
+                            containterBottom > 0 &&
+                            !instance.yappContainerBlocks[i].usrOpts.staticImage &&
+                            window.innerWidth >= instance.opts.mobileBreakpoint;
+
+
+      if (boundariesTest) {
         // Calculate position
-        imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
+        elImg.imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
 
         if (!instance.ticking) {
           // Update animation
-          var yappBlockTransform = {
-            'elImg': elImg,
-            'imagePosition': imagePosition
-          };
-          requestAnimationFrame(instance.yappScroll.bind(yappBlockTransform));
+          var bindedYappScroll = instance.yappScroll.bind(instance);
+
+          requestAnimationFrame(bindedYappScroll);
           instance.ticking = true;
         }
       }
