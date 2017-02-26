@@ -9,13 +9,15 @@ body {
     margin: 0 auto;
 }
 nav {
+    background: rgba(black, .5);
+    background: linear-gradient(rgba(black, .8) 0%, rgba(black, 0) 100%);
     position: absolute;
     width: 100%;
     top: 0;
     color: #fff;
     text-align: right;
     line-height: 2rem;
-    padding: 1rem 0;
+    padding: 1rem 0 2rem;
     z-index: 2;
     .brand {
         float: left;
