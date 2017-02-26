@@ -97,8 +97,8 @@ var yapp = (function() {
     // Get the value and unit for custom width property  - data-yapp-width
     if (el.getAttribute('data-yapp-width')) {
       var width = el.getAttribute('data-yapp-width'),
-        regexW = /([A-Za-z%]+)/,
-        widthArr = width.split(regexW, 2);
+          regexW = /([A-Za-z%]+)/,
+          widthArr = width.split(regexW, 2);
 
       widthVal = widthArr[0];
       widthUnit = widthArr[1];
@@ -238,10 +238,10 @@ var yapp = (function() {
   // Calculate image position
   instance.caclImgPos = function() {
     var containerOffsetPercent = 0,
-        imgOffsetAmmount = 0,
         containerHeight = 0,
         containterBottom = 0,
         containerTop = 0,
+        imgOffsetAmmount = 0,
         imageHeight = 0,
         boundariesTest = false,
         el = null,
@@ -260,14 +260,14 @@ var yapp = (function() {
       // Get image dimentions
       imageHeight = elImg.getBoundingClientRect().height;
 
-      // Set some boundaries
+      // Boundaries to define when image should be scrolled
       boundariesTest =  containerTop <= window.innerHeight &&
                         containterBottom > 0 &&
                         !el.usrOpts.image.static &&
                         window.innerWidth >= instance.opts.mobileBreakpoint;
 
       if (boundariesTest) {
-        // Calculate position
+        // Assign check to be used in animation
         elImg.boundariesTest = boundariesTest;
 
         // Calculate image element translateY based on position of container element
@@ -283,8 +283,10 @@ var yapp = (function() {
   // Initiate yapp
   instance.init = function() {
     instance.setupContainer();
+    // Sets initial image position on load
     instance.calcScroll();
 
+    // Create event listener
     var bindedCalcScroll = instance.calcScroll.bind(instance);
     window.addEventListener('scroll', bindedCalcScroll, false);
 
