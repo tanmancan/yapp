@@ -187,6 +187,7 @@ var yapp = (function() {
         containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.container.height,
         cssHeightUnit = usrOpts.style.cssHeightUnit ? usrOpts.style.cssHeightUnit : instance.opts.style.cssHeightUnit;
 
+    // Apply inline styles to image
     imgBlock.style.background = 'url(' + imgSrc + ') center center no-repeat';
     imgBlock.style.width = instance.opts.image.width + instance.opts.style.cssWidthUnit;
     imgBlock.style.height = (containerHeight * scrollModifier) + cssHeightUnit;
@@ -197,28 +198,20 @@ var yapp = (function() {
     return this;
   };
 
-  // Scroll image
-  instance.yappScroll = function() {
+  // Animate yapp image
+  instance.yappAnimate = function() {
 
     var imagePosition,
-      elImg;
+        elImg;
 
     for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
       elImg = instance.yappContainerBlocks[i].yappImgBlock;
       imagePosition = elImg.imagePosition;
 
       if (elImg.boundariesTest) {
-        // Check for vendor prefix
+        // Check for transform property
         if ('transform' in elImg.style) {
           elImg.style.transform = 'translate3d(0,' + imagePosition + 'px, 0)';
-        } else if ('mozTransform' in elImg.style) {
-          elImg.style.mozTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
-        } else if ('msTransform' in elImg.style) {
-          elImg.style.msTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
-        } else if ('oTransform' in elImg.style) {
-          elImg.style.oTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
-        } else if ('webkitTransform' in elImg.style) {
-          elImg.style.webkitTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
         }
       }
     }
@@ -227,26 +220,15 @@ var yapp = (function() {
     return this;
   };
 
-  // Run scroll transform
+  // Calculate scrolling and call animation
   instance.calcScroll = function() {
-    var el = null,
-        elImg = null;
-
-    for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
-      // Current container element
-      el = instance.yappContainerBlocks[i];
-
-      // Current image element
-      elImg = el.yappImgBlock;
-
-      // Calculate image position
-      instance.caclImgPos(el, elImg);
-    }
+    // Calculate image position
+    instance.caclImgPos();
 
     if (!instance.ticking) {
       // Update animation
-      var bindedYappScroll = instance.yappScroll.bind(instance);
-      requestAnimationFrame(bindedYappScroll);
+      var bindedYappAnimate = instance.yappAnimate.bind(instance);
+      requestAnimationFrame(bindedYappAnimate);
       instance.ticking = true;
     }
 
@@ -254,37 +236,45 @@ var yapp = (function() {
   };
 
   // Calculate image position
-  instance.caclImgPos = function(el, elImg) {
+  instance.caclImgPos = function() {
     var containerOffsetPercent = 0,
         imgOffsetAmmount = 0,
         containerHeight = 0,
         containterBottom = 0,
         containerTop = 0,
         imageHeight = 0,
-        boundariesTest = false;
+        boundariesTest = false,
+        el = null,
+        elImg = null;
 
-    // Get container diementions
-    containerHeight = el.getBoundingClientRect().height;
-    containterBottom = el.getBoundingClientRect().bottom;
-    containerTop = el.getBoundingClientRect().top;
+    for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
+      // Current container elements
+      el = instance.yappContainerBlocks[i];
+      elImg = el.yappImgBlock;
 
-    // Get image dimentions
-    imageHeight = elImg.getBoundingClientRect().height;
+      // Get container diementions
+      containerHeight = el.getBoundingClientRect().height;
+      containterBottom = el.getBoundingClientRect().bottom;
+      containerTop = el.getBoundingClientRect().top;
 
-    // Set some boundaries
-    boundariesTest =  containerTop <= window.innerHeight &&
-                      containterBottom > 0 &&
-                      !el.usrOpts.image.static &&
-                      window.innerWidth >= instance.opts.mobileBreakpoint;
+      // Get image dimentions
+      imageHeight = elImg.getBoundingClientRect().height;
 
-    if (boundariesTest) {
-      // Calculate position
-      elImg.boundariesTest = boundariesTest;
+      // Set some boundaries
+      boundariesTest =  containerTop <= window.innerHeight &&
+                        containterBottom > 0 &&
+                        !el.usrOpts.image.static &&
+                        window.innerWidth >= instance.opts.mobileBreakpoint;
 
-      // Calculate image element translateY based on position of container element
-      containerOffsetPercent = containterBottom / window.innerHeight;
-      imgOffsetAmmount = containerHeight - (containerHeight * containerOffsetPercent);
-      elImg.imagePosition = (imgOffsetAmmount - ((containerHeight/imageHeight) * imgOffsetAmmount)).toFixed(2);
+      if (boundariesTest) {
+        // Calculate position
+        elImg.boundariesTest = boundariesTest;
+
+        // Calculate image element translateY based on position of container element
+        containerOffsetPercent = containterBottom / window.innerHeight;
+        imgOffsetAmmount = containerHeight - (containerHeight * containerOffsetPercent);
+        elImg.imagePosition = (imgOffsetAmmount - ((containerHeight/imageHeight) * imgOffsetAmmount)).toFixed(2);
+      }
     }
 
     return this;
