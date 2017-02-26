@@ -178,7 +178,6 @@ var yapp = (function() {
     el.style.backgroundSize = instance.opts.backgroundSize;
     el.style.position = instance.opts.posAbs;
     el.style.bottom = instance.opts.imagePositionBottom;
-    el.style.opacity = 1;
 
     return this;
   };
