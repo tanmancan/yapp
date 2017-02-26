@@ -83,7 +83,8 @@ blockquote {
         opacity: .125;
     }
     [data-yapp-img] & {
-    	mix-blend-mode: exclusion;
+        opacity: .8;
+        text-shadow: 1px 1px black;
         color: #fff;
         background: transparent;
         margin: 0 auto;
@@ -92,7 +93,8 @@ blockquote {
         left: 0;
         right: 0;
         &:before {
-            opacity: .75;
+            opacity: 1;
+            text-shadow: 1px 1px black;
         }
     }
 }
@@ -106,7 +108,7 @@ blockquote {
 }
 #howtouse {
     padding: 3rem 5rem;
-  	margin-bottom: 5rem;
+    margin-bottom: 5rem;
     p {
         padding: 0;
         -webkit-column-width: initial;
@@ -146,9 +148,9 @@ blockquote {
         }
     }
     hr{
-		border: 1px solid #ccc;
-		border-width: 0 0 1px 0;
-		margin: 3rem 0 1rem;
+        border: 1px solid #ccc;
+        border-width: 0 0 1px 0;
+        margin: 3rem 0 1rem;
     }
 }
 /**
@@ -245,7 +247,7 @@ pre[data-line] {
     padding: inherit 0;
     margin-top: 1em;
     /* Same as .prism’s padding-top */
-    
+
     background: hsla(24, 20%, 50%, .08);
     background: -moz-linear-gradient(left, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
     background: -webkit-linear-gradient(left, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
@@ -292,7 +294,7 @@ pre.line-numbers > code {
     left: -3.8em;
     width: 3em;
     /* works for line-numbers below 1000 lines */
-    
+
     letter-spacing: -1px;
     border-right: 1px solid #999;
     -webkit-user-select: none;
@@ -315,19 +317,19 @@ pre.line-numbers > code {
 /*.token.tab:not(:empty):before,
 .token.cr:before,
 .token.lf:before {
-	color: hsl(24, 20%, 85%);
+    color: hsl(24, 20%, 85%);
 }
 
 .token.tab:not(:empty):before {
-	content: '▸';
+    content: '▸';
 }
 
 .token.cr:before {
-	content: '␍';
+    content: '␍';
 }
 
 .token.lf:before {
-	content: '␊';
+    content: '␊';
 }*/
 
 .token a {
