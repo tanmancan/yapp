@@ -189,9 +189,6 @@ var yapp = (function() {
     var imagePosition,
       elImg;
 
-    // while(instance.yappContainerBlocks) {
-    //   console.log(this);
-    // }
     for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
       elImg = instance.yappContainerBlocks[i].yappImgBlock;
       imagePosition = elImg.imagePosition;
@@ -216,46 +213,20 @@ var yapp = (function() {
     return this;
   };
 
-  // Calculate image position
-  instance.caclImgPos = function(cB, cT, cH) {
-
-    // Calculate image element translateY based on position of container element
-    var containerOffsetPercent = cB / window.outerHeight,
-      imgOffsetAmmount = cH - (cH * containerOffsetPercent);
-
-    return imgOffsetAmmount;
-  };
-
   // Run scroll transform
-  instance.requestTick = function() {
-    var containerHeight = 0,
-      containterBottom = 0,
-      containerTop = 0,
-      imagePosition = null,
-      el = null,
-      elImg = null;
+  instance.calcScroll = function() {
+    var el = null,
+        elImg = null;
 
     for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
+      // Current container element
       el = instance.yappContainerBlocks[i];
 
-      containerHeight = el.getBoundingClientRect().height;
-      containterBottom = el.getBoundingClientRect().bottom;
-      containerTop = el.getBoundingClientRect().top;
+      // Current image element
+      elImg = el.yappImgBlock;
 
-      // Get current yapp image element
-      elImg = instance.yappContainerBlocks[i].yappImgBlock;
-
-      // Set some boundaries
-      var boundariesTest = containerTop <= window.outerHeight &&
-        containterBottom > 0 &&
-        !instance.yappContainerBlocks[i].usrOpts.staticImage &&
-        window.innerWidth >= instance.opts.mobileBreakpoint;
-
-      if (boundariesTest) {
-        // Calculate position
-        elImg.imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight).toFixed(2);
-        elImg.boundariesTest = boundariesTest;
-      }
+      // Calculate image position
+      instance.caclImgPos(el, elImg);
     }
 
     if (!instance.ticking) {
@@ -267,12 +238,49 @@ var yapp = (function() {
     return this;
   };
 
+  // Calculate image position
+  instance.caclImgPos = function(el, elImg) {
+    var containerOffsetPercent = 0,
+        imgOffsetAmmount = 0,
+        containerHeight = 0,
+        containterBottom = 0,
+        containerTop = 0,
+        imageHeight = 0,
+        boundariesTest = false;
+
+    // Get container diementions
+    containerHeight = el.getBoundingClientRect().height;
+    containterBottom = el.getBoundingClientRect().bottom;
+    containerTop = el.getBoundingClientRect().top;
+
+    // Get image dimentions
+    imageHeight = elImg.getBoundingClientRect().height;
+
+    // Set some boundaries
+    boundariesTest =  containerTop <= window.innerHeight &&
+                      containterBottom > 0 &&
+                      !el.usrOpts.staticImage &&
+                      window.innerWidth >= instance.opts.mobileBreakpoint;
+
+    if (boundariesTest) {
+      // Calculate position
+      elImg.boundariesTest = boundariesTest;
+
+      // Calculate image element translateY based on position of container element
+      containerOffsetPercent = containterBottom / window.innerHeight;
+      imgOffsetAmmount = containerHeight - (containerHeight * containerOffsetPercent);
+      elImg.imagePosition = (imgOffsetAmmount - ((containerHeight/imageHeight) * imgOffsetAmmount)).toFixed(2);
+    }
+
+    return this;
+  };
+
   // Initiate yapp
   instance.init = function() {
     instance.setupContainer();
-    instance.requestTick();
+    instance.calcScroll();
 
-    window.addEventListener('scroll', instance.requestTick, false);
+    window.addEventListener('scroll', instance.calcScroll, false);
 
     return this;
   };
