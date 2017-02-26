@@ -30,24 +30,31 @@ var yapp = (function() {
 
   // Default settings
   instance.opts = {
-    // Parallax modifiers
-    'scrollModifier': 2,
-    'mobileBreakpoint': 1024,
+    // Parallax modifiers, sets image scale and perceived scroll amount
+    scrollModifier: 2,
+    // Minimum window width to apply parallax
+    mobileBreakpoint: 1024,
     // Yapp container
-    'containerWidth': 100,
-    'containerHeight': (100 / 3),
-    'containerOverflow': 'hidden',
+    container: {
+      width: 100,
+      height: (100 / 3),
+      overflow: 'hidden',
+    },
     // Yapp image
-    'staticImage': false,
-    'imageWidth': 100,
-    'imagePositionBottom': 0,
-    'backgroundSize': 'cover',
-    // Styles
-    'marginAuto': '0 auto',
-    'cssWidthUnit': '%',
-    'cssHeightUnit': 'vh',
-    'posAbs': 'absolute',
-    'posRel': 'relative'
+    image: {
+      static: false,
+      width: 100,
+      positionBottom: 0,
+      backgroundSize: 'cover',
+    },
+    // Base Styles
+    style: {
+      marginAuto: '0 auto',
+      cssWidthUnit: '%',
+      cssHeightUnit: 'vh',
+      posAbs: 'absolute',
+      posRel: 'relative'
+    }
   };
 
   // Retrieve all yapp elements
@@ -60,10 +67,16 @@ var yapp = (function() {
   // Retrieve custom data-yapp settings
   instance.userOptions = function(el) {
     var dataOpts = {},
-      heightVal = instance.opts.containerHeight,
-      heightUnit = instance.opts.cssHeightUnit,
-      widthVal = instance.opts.containerWidth,
-      widthUnit = instance.opts.cssWidthUnit;
+      heightVal = instance.opts.container.height,
+      heightUnit = instance.opts.style.cssHeightUnit,
+      widthVal = instance.opts.container.width,
+      widthUnit = instance.opts.style.cssWidthUnit;
+
+
+    // Replicate structure of default options
+    dataOpts.style = {};
+    dataOpts.container = {};
+    dataOpts.image = {};
 
     // Custom height - data-yapp-height
     // Get the value and unit for custom height value  - data-yapp-height
@@ -74,10 +87,11 @@ var yapp = (function() {
       heightVal = heightArr[0];
       heightUnit = heightArr[1];
     }
+
     // Custom height value
     dataOpts.containerHeight = heightVal || null;
     // Custom height Unit
-    dataOpts.cssHeightUnit = heightUnit || null;
+    dataOpts.style.cssHeightUnit = heightUnit || null;
 
     // Custom width - data-yapp-width
     // Get the value and unit for custom width value  - data-yapp-width
@@ -92,13 +106,13 @@ var yapp = (function() {
     // Custom width value
     dataOpts.containerWidth = widthVal ? widthVal : null;
     // Custom width Unit
-    dataOpts.cssWidthUnit = widthUnit ? widthUnit : null;
+    dataOpts.style.cssWidthUnit = widthUnit ? widthUnit : null;
 
     // Scroll modifier - data-yapp-modifier
     dataOpts.scrollModifier = el.getAttribute('data-yapp-modifier') ? instance.opts.scrollModifier + (el.getAttribute('data-yapp-modifier') / 100) : null;
 
     // Non scrolling image - data-yapp-static
-    dataOpts.staticImage = el.hasAttribute('data-yapp-static') ? true : false;
+    dataOpts.image.static = el.hasAttribute('data-yapp-static') ? true : false;
 
     return dataOpts;
   };
@@ -129,20 +143,20 @@ var yapp = (function() {
   instance.setupContainerStyle = function(el, usrOpts) {
 
     // Set container width
-    el.style.width = usrOpts.containerWidth ? usrOpts.containerWidth + usrOpts.cssWidthUnit : instance.opts.containerWidth + instance.opts.cssWidthUnit;
+    el.style.width = usrOpts.containerWidth ? usrOpts.containerWidth + usrOpts.style.cssWidthUnit : instance.opts.container.width + instance.opts.style.cssWidthUnit;
 
     // Set max width of 100% to prevent horizontal scroll
     el.style.maxWidth = "100%";
 
     // Set margin auto
-    el.style.margin = instance.opts.marginAuto;
+    el.style.margin = instance.opts.style.marginAuto;
 
     // Set container height
-    el.style.height = usrOpts.containerHeight ? usrOpts.containerHeight + usrOpts.cssHeightUnit : instance.opts.containerHeight + instance.opts.cssHeightUnit;
+    el.style.height = usrOpts.containerHeight ? usrOpts.containerHeight + usrOpts.style.cssHeightUnit : instance.opts.container.height + instance.opts.style.cssHeightUnit;
 
     // Set relative position and overflow hidden
-    el.style.overflow = instance.opts.containerOverflow;
-    el.style.position = instance.opts.posRel;
+    el.style.overflow = instance.opts.container.overflow;
+    el.style.position = instance.opts.style.posRel;
 
     return this;
   };
@@ -169,15 +183,15 @@ var yapp = (function() {
   instance.setupImgStyle = function(el, img, usrOpts) {
     // Use custom value if it iexists
     var scrollModifier = usrOpts.scrollModifier ? usrOpts.scrollModifier : instance.opts.scrollModifier,
-      containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.containerHeight,
-      cssHeightUnit = usrOpts.cssHeightUnit ? usrOpts.cssHeightUnit : instance.opts.cssHeightUnit;
+      containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.container.height,
+      cssHeightUnit = usrOpts.style.cssHeightUnit ? usrOpts.style.cssHeightUnit : instance.opts.style.cssHeightUnit;
 
     el.style.background = 'url(' + img + ') center center no-repeat';
-    el.style.width = instance.opts.imageWidth + instance.opts.cssWidthUnit;
+    el.style.width = instance.opts.image.width + instance.opts.style.cssWidthUnit;
     el.style.height = (containerHeight * scrollModifier) + cssHeightUnit;
-    el.style.backgroundSize = instance.opts.backgroundSize;
-    el.style.position = instance.opts.posAbs;
-    el.style.bottom = instance.opts.imagePositionBottom;
+    el.style.backgroundSize = instance.opts.image.backgroundSize;
+    el.style.position = instance.opts.style.posAbs;
+    el.style.bottom = instance.opts.image.positionBottom;
 
     return this;
   };
@@ -258,7 +272,7 @@ var yapp = (function() {
     // Set some boundaries
     boundariesTest =  containerTop <= window.innerHeight &&
                       containterBottom > 0 &&
-                      !el.usrOpts.staticImage &&
+                      !el.usrOpts.image.static &&
                       window.innerWidth >= instance.opts.mobileBreakpoint;
 
     if (boundariesTest) {
