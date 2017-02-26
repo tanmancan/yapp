@@ -85,6 +85,7 @@ var yapp = (function() {
       var width = el.getAttribute('data-yapp-width'),
         regexW = /([A-Za-z%]+)/,
         widthArr = width.split(regexW, 2);
+
       widthVal = widthArr[0];
       widthUnit = widthArr[1];
     }
@@ -177,6 +178,7 @@ var yapp = (function() {
     el.style.backgroundSize = instance.opts.backgroundSize;
     el.style.position = instance.opts.posAbs;
     el.style.bottom = instance.opts.imagePositionBottom;
+    el.style.opacity = 1;
 
     return this;
   };
@@ -185,26 +187,28 @@ var yapp = (function() {
   instance.yappScroll = function() {
 
     var imagePosition,
-        elImg;
+      elImg;
 
     // while(instance.yappContainerBlocks) {
     //   console.log(this);
     // }
     for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
       elImg = instance.yappContainerBlocks[i].yappImgBlock;
-      imagePosition = instance.yappContainerBlocks[i].yappImgBlock.imagePosition;
+      imagePosition = elImg.imagePosition;
 
-      // Check for vendor prefix
-      if ('transform' in elImg.style) {
-        elImg.style.transform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-      } else if ('mozTransform' in elImg.style) {
-        elImg.style.mozTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-      } else if ('msTransform' in elImg.style) {
-        elImg.style.msTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-      } else if ('oTransform' in elImg.style) {
-        elImg.style.oTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
-      } else if ('webkitTransform' in elImg.style) {
-        elImg.style.webkitTransform = 'translate3d(0px,' + imagePosition + 'px, 0px)';
+      if (elImg.boundariesTest) {
+        // Check for vendor prefix
+        if ('transform' in elImg.style) {
+          elImg.style.transform = 'translate3d(0,' + imagePosition + 'px, 0)';
+        } else if ('mozTransform' in elImg.style) {
+          elImg.style.mozTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
+        } else if ('msTransform' in elImg.style) {
+          elImg.style.msTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
+        } else if ('oTransform' in elImg.style) {
+          elImg.style.oTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
+        } else if ('webkitTransform' in elImg.style) {
+          elImg.style.webkitTransform = 'translate3d(0,' + imagePosition + 'px, 0)';
+        }
       }
     }
 
@@ -242,24 +246,22 @@ var yapp = (function() {
       elImg = instance.yappContainerBlocks[i].yappImgBlock;
 
       // Set some boundaries
-      var boundariesTest =  containerTop <= window.outerHeight &&
-                            containterBottom > 0 &&
-                            !instance.yappContainerBlocks[i].usrOpts.staticImage &&
-                            window.innerWidth >= instance.opts.mobileBreakpoint;
-
+      var boundariesTest = containerTop <= window.outerHeight &&
+        containterBottom > 0 &&
+        !instance.yappContainerBlocks[i].usrOpts.staticImage &&
+        window.innerWidth >= instance.opts.mobileBreakpoint;
 
       if (boundariesTest) {
         // Calculate position
-        elImg.imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight);
-
-        if (!instance.ticking) {
-          // Update animation
-          var bindedYappScroll = instance.yappScroll.bind(instance);
-
-          requestAnimationFrame(bindedYappScroll);
-          instance.ticking = true;
-        }
+        elImg.imagePosition = instance.caclImgPos(containterBottom, containerTop, containerHeight).toFixed(2);
+        elImg.boundariesTest = boundariesTest;
       }
+    }
+
+    if (!instance.ticking) {
+      // Update animation
+      requestAnimationFrame(instance.yappScroll.bind(instance));
+      instance.ticking = true;
     }
 
     return this;
