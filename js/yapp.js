@@ -67,11 +67,10 @@ var yapp = (function() {
   // Retrieve custom data-yapp settings
   instance.userOptions = function(el) {
     var dataOpts = {},
-      heightVal = instance.opts.container.height,
-      heightUnit = instance.opts.style.cssHeightUnit,
-      widthVal = instance.opts.container.width,
-      widthUnit = instance.opts.style.cssWidthUnit;
-
+        heightVal = instance.opts.container.height,
+        heightUnit = instance.opts.style.cssHeightUnit,
+        widthVal = instance.opts.container.width,
+        widthUnit = instance.opts.style.cssWidthUnit;
 
     // Replicate structure of default options
     dataOpts.style = {};
@@ -79,11 +78,12 @@ var yapp = (function() {
     dataOpts.image = {};
 
     // Custom height - data-yapp-height
-    // Get the value and unit for custom height value  - data-yapp-height
+    // Get the value and unit for custom height property  - data-yapp-height
     if (el.getAttribute('data-yapp-height')) {
       var height = el.getAttribute('data-yapp-height'),
-        regexH = /([A-Za-z]+\w)/,
-        heightArr = height.split(regexH, 2);
+          regexH = /([A-Za-z]+\w)/,
+          heightArr = height.split(regexH, 2);
+
       heightVal = heightArr[0];
       heightUnit = heightArr[1];
     }
@@ -94,7 +94,7 @@ var yapp = (function() {
     dataOpts.style.cssHeightUnit = heightUnit || null;
 
     // Custom width - data-yapp-width
-    // Get the value and unit for custom width value  - data-yapp-width
+    // Get the value and unit for custom width property  - data-yapp-width
     if (el.getAttribute('data-yapp-width')) {
       var width = el.getAttribute('data-yapp-width'),
         regexW = /([A-Za-z%]+)/,
@@ -120,20 +120,21 @@ var yapp = (function() {
   // Setup yapp elements
   instance.setupContainer = function() {
     var el = null,
-      imgSrc = null;
+        imgSrc = null;
+
     // Setup up styles for each yapp elements
     for (var i = 0; i < instance.yappContainerBlocks.length; i++) {
       el = instance.yappContainerBlocks[i];
       imgSrc = el.getAttribute('data-yapp-img');
 
       // Get data-yapp options
-      instance.yappContainerBlocks[i].usrOpts = instance.userOptions(el);
+      el.usrOpts = instance.userOptions(el);
 
       // Setup yapp element container styles
-      instance.setupContainerStyle(el, instance.yappContainerBlocks[i].usrOpts);
+      instance.setupContainerStyle(el, el.usrOpts);
 
       // Setup yapp element background image
-      instance.setupImg(imgSrc, el, i, instance.yappContainerBlocks[i].usrOpts);
+      instance.setupImg(imgSrc, el, el.usrOpts);
 
     }
     return this;
@@ -162,7 +163,7 @@ var yapp = (function() {
   };
 
   // Create and add image elements to container
-  instance.setupImg = function(imgSrc, el, i, usrOpts) {
+  instance.setupImg = function(imgSrc, el, usrOpts) {
 
     // Create element for background image
     var imgBlock = document.createElement('div');
@@ -174,24 +175,24 @@ var yapp = (function() {
     el.appendChild(imgBlock);
 
     // Add yapp image element as a property of yapp container element
-    instance.yappContainerBlocks[i].yappImgBlock = imgBlock;
+    el.yappImgBlock = imgBlock;
 
     return this;
   };
 
   // Add image element styles
-  instance.setupImgStyle = function(el, img, usrOpts) {
+  instance.setupImgStyle = function(imgBlock, imgSrc, usrOpts) {
     // Use custom value if it iexists
     var scrollModifier = usrOpts.scrollModifier ? usrOpts.scrollModifier : instance.opts.scrollModifier,
-      containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.container.height,
-      cssHeightUnit = usrOpts.style.cssHeightUnit ? usrOpts.style.cssHeightUnit : instance.opts.style.cssHeightUnit;
+        containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.container.height,
+        cssHeightUnit = usrOpts.style.cssHeightUnit ? usrOpts.style.cssHeightUnit : instance.opts.style.cssHeightUnit;
 
-    el.style.background = 'url(' + img + ') center center no-repeat';
-    el.style.width = instance.opts.image.width + instance.opts.style.cssWidthUnit;
-    el.style.height = (containerHeight * scrollModifier) + cssHeightUnit;
-    el.style.backgroundSize = instance.opts.image.backgroundSize;
-    el.style.position = instance.opts.style.posAbs;
-    el.style.bottom = instance.opts.image.positionBottom;
+    imgBlock.style.background = 'url(' + imgSrc + ') center center no-repeat';
+    imgBlock.style.width = instance.opts.image.width + instance.opts.style.cssWidthUnit;
+    imgBlock.style.height = (containerHeight * scrollModifier) + cssHeightUnit;
+    imgBlock.style.backgroundSize = instance.opts.image.backgroundSize;
+    imgBlock.style.position = instance.opts.style.posAbs;
+    imgBlock.style.bottom = instance.opts.image.positionBottom;
 
     return this;
   };
