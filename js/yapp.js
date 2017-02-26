@@ -66,6 +66,7 @@ var yapp = (function() {
 
   // Retrieve custom data-yapp settings
   instance.userOptions = function(el) {
+
     var dataOpts = {},
         heightVal = instance.opts.container.height,
         heightUnit = instance.opts.style.cssHeightUnit,
@@ -119,6 +120,7 @@ var yapp = (function() {
 
   // Setup yapp elements
   instance.setupContainer = function() {
+
     var el = null,
         imgSrc = null;
 
@@ -182,6 +184,7 @@ var yapp = (function() {
 
   // Add image element styles
   instance.setupImgStyle = function(imgBlock, imgSrc, usrOpts) {
+
     // Use custom value if it iexists
     var scrollModifier = usrOpts.scrollModifier ? usrOpts.scrollModifier : instance.opts.scrollModifier,
         containerHeight = usrOpts.containerHeight ? usrOpts.containerHeight : instance.opts.container.height,
@@ -222,6 +225,7 @@ var yapp = (function() {
 
   // Calculate scrolling and call animation
   instance.calcScroll = function() {
+
     // Calculate image position
     instance.caclImgPos();
 
@@ -237,6 +241,7 @@ var yapp = (function() {
 
   // Calculate image position
   instance.caclImgPos = function() {
+
     var containerOffsetPercent = 0,
         containerHeight = 0,
         containterBottom = 0,
@@ -282,6 +287,7 @@ var yapp = (function() {
 
   // Initiate yapp
   instance.init = function() {
+
     instance.setupContainer();
     // Sets initial image position on load
     instance.calcScroll();
