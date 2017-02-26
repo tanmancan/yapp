@@ -244,7 +244,8 @@ var yapp = (function() {
 
     if (!instance.ticking) {
       // Update animation
-      requestAnimationFrame(instance.yappScroll.bind(instance));
+      var bindedYappScroll = instance.yappScroll.bind(instance);
+      requestAnimationFrame(bindedYappScroll);
       instance.ticking = true;
     }
 
@@ -293,7 +294,8 @@ var yapp = (function() {
     instance.setupContainer();
     instance.calcScroll();
 
-    window.addEventListener('scroll', instance.calcScroll, false);
+    var bindedCalcScroll = instance.calcScroll.bind(instance);
+    window.addEventListener('scroll', bindedCalcScroll, false);
 
     return this;
   };
